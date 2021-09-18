@@ -4,6 +4,7 @@ const user = require('../controllers/user')
 
 
 router.post('/', user.post)
+router.get('/', user.get)
 
 
 module.exports = router

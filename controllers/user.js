@@ -1,4 +1,4 @@
-const { users } = require('../models')
+const { users, product, profile } = require('../models')
 const joi = require('joi')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
@@ -23,7 +23,7 @@ module.exports = {
 
             const checkEmail = await users.findOne({
                 where: {
-                    email: checkEmail.dataValues.email
+                    email: body.email
                 }
             })
 
@@ -55,6 +55,34 @@ module.exports = {
         } catch (error) {
             console.log(error)
             return res.status(200).json({
+                status: "failed",
+                message: "Internal Server Error"
+            })
+        }
+    },
+    get: async(req, res) => {
+        try {
+            const getUser = await users.findAll({
+                include: {
+                    model: profile,
+                    as: "profile"
+                }
+            })
+
+            if (!getUser) {
+                return res.status(400).json({
+                    status: "failed",
+                    message: "Cannot get users"
+                })
+            }
+            return res.status(200).json({
+                status: "success",
+                message: "succes retrieved data",
+                data: getUser
+            })
+        } catch (error) {
+            console.log(error)
+            return res.status(500).json({
                 status: "failed",
                 message: "Internal Server Error"
             })
